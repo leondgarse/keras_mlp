@@ -52,17 +52,17 @@ def ResMLP(
 
 def ResMLP12(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
     return ResMLP(
-        input_shape, 12, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp12", **kwargs
+        input_shape, 12, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMLP12", **kwargs
     )
 
 
 def ResMLP24(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
     return ResMLP(
-        input_shape, 24, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp24", **kwargs
+        input_shape, 24, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMLP24", **kwargs
     )
 
 
 def ResMLP36(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
     return ResMLP(
-        input_shape, 36, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp36", **kwargs
+        input_shape, 36, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMLP36", **kwargs
     )
