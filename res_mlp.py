@@ -25,7 +25,7 @@ def mlp_block(inputs, mlp_dim, activation="gelu", name=None):
     return nn
 
 
-def ResMlpModel(
+def ResMLP(
     input_shape,
     num_blocks,
     patch_size,
@@ -50,19 +50,19 @@ def ResMlpModel(
     return keras.Model(inputs, nn, name=model_name)
 
 
-def ResMlp12(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
-    return ResMlpModel(
+def ResMLP12(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
+    return ResMLP(
         input_shape, 12, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp12", **kwargs
     )
 
 
-def ResMlp24(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
-    return ResMlpModel(
+def ResMLP24(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
+    return ResMLP(
         input_shape, 24, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp24", **kwargs
     )
 
 
-def ResMlp36(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
-    return ResMlpModel(
+def ResMLP36(input_shape=(224, 224, 3), hidden_dim=384, num_classes=0, classifier_activation="softmax", **kwargs):
+    return ResMLP(
         input_shape, 36, 16, hidden_dim, hidden_dim * 4, num_classes, classifier_activation, "ResMlp36", **kwargs
     )
