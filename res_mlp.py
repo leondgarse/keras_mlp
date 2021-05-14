@@ -4,7 +4,7 @@ from tensorflow import keras
 def channel_affine(inputs, use_bias=True, weight_init_value=1, name=""):
     ww_init = keras.initializers.Constant(weight_init_value) if weight_init_value != 1 else "ones"
     nn = keras.backend.expand_dims(inputs, 1)
-    nn = keras.layers.DepthwiseConv2D(1, depthwise_initializer=ww_init, use_bias=use_bias, name=name + "_affine")(nn)
+    nn = keras.layers.DepthwiseConv2D(1, depthwise_initializer=ww_init, use_bias=use_bias, name=name + "affine")(nn)
     return keras.backend.squeeze(nn, 1)
 
 
@@ -40,7 +40,7 @@ def ResMLP(
     nn = keras.layers.Reshape([-1, hidden_dim])(nn)
 
     for ii in range(num_blocks):
-        name = "_".join(["mlp_block", str(ii), ""])
+        name = "_".join(["mlp_block", str(ii + 1), ""])
         nn = mlp_block(nn, mlp_dim=mlp_dim, name=name)
 
     if num_classes > 0:

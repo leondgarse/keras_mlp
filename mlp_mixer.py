@@ -36,7 +36,7 @@ def MlpMixerModel(
     nn = keras.layers.Reshape([-1, hidden_dim])(nn)
 
     for ii in range(num_blocks):
-        name = "_".join(["mixer_block", str(ii), ""])
+        name = "_".join(["mixer_block", str(ii + 1), ""])
         nn = mixer_block(nn, tokens_mlp_dim=tokens_mlp_dim, channels_mlp_dim=channels_mlp_dim, name=name)
 
     if num_classes > 0:
