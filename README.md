@@ -5,7 +5,7 @@
   - [PDF MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
   - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
   - [Github Benjamin-Etheredge/mlp-mixer-keras](https://github.com/Benjamin-Etheredge/mlp-mixer-keras)
-  - **Calculate total parameters** `DS -> token-mixing, DC --> channel-mixing`
+  - **Calculate total parameters** `DS -> token-mixing, DC --> channel-mixing, num_patch --> Sequence length`
     ```py
     inputs, patch_size, hidden_dim, DS, DC, num_blocks = 224, 32, 512, 256, 2048, 8
     num_patch = (inputs * inputs) // (patch_size * patch_size)
