@@ -37,6 +37,7 @@
     - In particular, we use RandAugment [12], mixup [56], dropout [42], and stochastic depth [19].
     - This set of techniques was inspired by the timm library [52] and Touvron et al. [46].
     - More details on these hyperparameters are provided in Supplementary B.
-## Res MLP
+## ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
+  - [Github rishikksh20/ResMLP-pytorch](https://github.com/rishikksh20/ResMLP-pytorch)
 ***
