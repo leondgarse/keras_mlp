@@ -2,7 +2,7 @@
 ***
 
 ## MLP mixer
-  - [PDF MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
+  - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
   - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
   - [Github Benjamin-Etheredge/mlp-mixer-keras](https://github.com/Benjamin-Etheredge/mlp-mixer-keras)
   - **Calculate total parameters** `DS -> token-mixing, DC --> channel-mixing, num_patch --> Sequence length`
@@ -37,4 +37,6 @@
     - In particular, we use RandAugment [12], mixup [56], dropout [42], and stochastic depth [19].
     - This set of techniques was inspired by the timm library [52] and Touvron et al. [46].
     - More details on these hyperparameters are provided in Supplementary B.
+## Res MLP
+  - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
 ***
