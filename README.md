@@ -1,10 +1,22 @@
 # Keras_mlp
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Keras_mlp](#kerasmlp)
+	- [MLP mixer](#mlp-mixer)
+	- [ResMLP](#resmlp)
+
+<!-- /TOC -->
 ***
 
 ## MLP mixer
   - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
   - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
   - [Github Benjamin-Etheredge/mlp-mixer-keras](https://github.com/Benjamin-Etheredge/mlp-mixer-keras)
+  - **Usage**
+    ```py
+    import mlp_mixer
+    model = mlp_mixer.MlpMixerModel_B32(num_classes=1000)
+    ```
   - **Calculate total parameters** `DS -> token-mixing, DC --> channel-mixing, num_patch --> Sequence length`
     ```py
     inputs, patch_size, hidden_dim, DS, DC, num_blocks = 224, 32, 512, 256, 2048, 8
@@ -40,4 +52,9 @@
 ## ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
   - [Github rishikksh20/ResMLP-pytorch](https://github.com/rishikksh20/ResMLP-pytorch)
+  - **Usage**
+    ```py
+    import res_mlp
+    model = res_mlp.ResMLP12(num_classes=1000)
+    ```
 ***
