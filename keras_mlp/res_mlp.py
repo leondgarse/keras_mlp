@@ -1,9 +1,36 @@
 from tensorflow import keras
-
-# import tensorflow as tf
 import os
 
 
+BLOCK_CONFIGS = {
+    "12": {
+        "num_blocks": 12,
+        "patch_size": 16,
+        "hidden_dim": 384,
+        "channels_mlp_dim": 384 * 4,
+    },
+    "24": {
+        "num_blocks": 24,
+        "patch_size": 16,
+        "hidden_dim": 384,
+        "channels_mlp_dim": 384 * 4,
+    },
+    "36": {
+        "num_blocks": 36,
+        "patch_size": 16,
+        "hidden_dim": 384,
+        "channels_mlp_dim": 384 * 4,
+    },
+    "b24": {
+        "num_blocks": 24,
+        "patch_size": 8,
+        "hidden_dim": 768,
+        "channels_mlp_dim": 768 * 4,
+    },
+}
+
+
+@keras.utils.register_keras_serializable(package="Custom")
 class ChannelAffine(keras.layers.Layer):
     def __init__(self, use_bias=True, weight_init_value=1, **kwargs):
         super(ChannelAffine, self).__init__(**kwargs)
@@ -38,13 +65,14 @@ def channel_affine(inputs, use_bias=True, weight_init_value=1, name=""):
     return keras.backend.squeeze(nn, 1)
 
 
-def res_mlp_block(inputs, channels_mlp_dim, activation="gelu", name=None):
+def res_mlp_block(inputs, channels_mlp_dim, drop_rate=0, activation="gelu", name=None):
     nn = ChannelAffine(use_bias=True, name=name + "norm_1")(inputs)
     nn = keras.layers.Permute((2, 1), name=name + "permute_1")(nn)
     nn = keras.layers.Dense(nn.shape[-1], name=name + "token_mixing")(nn)
     nn = keras.layers.Permute((2, 1), name=name + "permute_2")(nn)
     nn = ChannelAffine(use_bias=False, name=name + "gamma_1")(nn)
-    # Drop
+    if drop_rate > 0:
+        nn = keras.layers.Dropout(drop_rate, noise_shape=(None, 1, 1), name=name + "token_drop")(nn)
     token_out = keras.layers.Add(name=name + "add_1")([inputs, nn])
 
     nn = ChannelAffine(use_bias=True, name=name + "norm_2")(token_out)
@@ -52,7 +80,8 @@ def res_mlp_block(inputs, channels_mlp_dim, activation="gelu", name=None):
     nn = keras.layers.Activation(activation, name=name + activation)(nn)
     nn = keras.layers.Dense(inputs.shape[-1], name=name + "channel_mixing_2")(nn)
     channel_out = ChannelAffine(use_bias=False, name=name + "gamma_2")(nn)
-    # Drop
+    if drop_rate > 0:
+        channel_out = keras.layers.Dropout(drop_rate, noise_shape=(None, 1, 1), name=name + "channel_drop")(channel_out)
     nn = keras.layers.Add(name=name + "add_2")([channel_out, token_out])
     return nn
 
@@ -77,10 +106,11 @@ def ResMLP(
     nn = keras.layers.Conv2D(hidden_dim, kernel_size=patch_size, strides=patch_size, padding="valid", name="stem")(inputs)
     nn = keras.layers.Reshape([-1, hidden_dim])(nn)
 
-    # drop_connect_s, drop_connect_e = drop_connect_rate if isinstance(drop_connect_rate, (list, tuple)) else [drop_connect_rate, drop_connect_rate]
+    drop_connect_s, drop_connect_e = drop_connect_rate if isinstance(drop_connect_rate, (list, tuple)) else [drop_connect_rate, drop_connect_rate]
     for ii in range(num_blocks):
         name = "{}_{}_".format("ResMlpBlock", str(ii + 1))
-        nn = res_mlp_block(nn, channels_mlp_dim=channels_mlp_dim, activation=activation, name=name)
+        drop_rate = drop_connect_s + (drop_connect_e - drop_connect_s) * ii / num_blocks
+        nn = res_mlp_block(nn, channels_mlp_dim=channels_mlp_dim, drop_rate=drop_rate, activation=activation, name=name)
     nn = ChannelAffine(name="pre_head_norm")(nn)
 
     if num_classes > 0:
@@ -125,32 +155,16 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
 
 
 def ResMLP12(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    num_blocks = 12
-    patch_size = 16
-    hidden_dim = 384
-    channels_mlp_dim = hidden_dim * 4
-    return ResMLP(**locals(), model_name="resmlp12", **kwargs)
+    return ResMLP(**BLOCK_CONFIGS["12"], **locals(), model_name="resmlp12", **kwargs)
 
 
 def ResMLP24(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    num_blocks = 24
-    patch_size = 16
-    hidden_dim = 384
-    channels_mlp_dim = hidden_dim * 4
-    return ResMLP(**locals(), model_name="resmlp24", **kwargs)
+    return ResMLP(**BLOCK_CONFIGS["24"], **locals(), model_name="resmlp24", **kwargs)
 
 
 def ResMLP36(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    num_blocks = 36
-    patch_size = 16
-    hidden_dim = 384
-    channels_mlp_dim = hidden_dim * 4
-    return ResMLP(**locals(), model_name="resmlp36", **kwargs)
+    return ResMLP(**BLOCK_CONFIGS["36"], **locals(), model_name="resmlp36", **kwargs)
 
 
 def ResMLP_B24(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    num_blocks = 24
-    patch_size = 8
-    hidden_dim = 768
-    channels_mlp_dim = hidden_dim * 4
-    return ResMLP(**locals(), model_name="resmlp_b24", **kwargs)
+    return ResMLP(**BLOCK_CONFIGS["b24"], **locals(), model_name="resmlp_b24", **kwargs)
