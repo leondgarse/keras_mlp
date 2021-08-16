@@ -4,7 +4,7 @@
 - [Keras_mlp](#kerasmlp)
 	- [Usage](#usage)
 	- [MLP mixer](#mlp-mixer)
-	- [[In progress] ResMLP](#in-progress-resmlp)
+	- [ResMLP](#resmlp)
 
 <!-- /TOC -->
 ***
@@ -44,7 +44,7 @@
     | Sequence length S    | 49    | 196   | 49    | 196   | 49    | 196   | 256   |
     | MLP dimension DC     | 2048  | 2048  | 3072  | 3072  | 4096  | 4096  | 5120  |
     | MLP dimension DS     | 256   | 256   | 384   | 384   | 512   | 512   | 640   |
-  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet21k", "imagenet_sam"]`, default is `imagenet`.
+  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet21k", "imagenet_sam"]`. Default is `imagenet`.
     ```py
     import keras_mlp
     # Will download and load `imagenet` pretrained weights.
@@ -59,6 +59,15 @@
     # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
     ```
     For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
+	- **Exclude model top layers** by set `num_classes=0`.
+  	```py
+		import keras_mlp
+  	mm = keras_mlp.MlpMixerL16(num_classes=0, pretrained="imagenet")
+		print(mm.output_shape)
+		# (None, 196, 1024)
+
+		mm.save('mlp_mixer_l16_imagenet-notop.h5')
+  	```
   - **Pre-training details**
     - We pre-train all models using Adam with β1 = 0.9, β2 = 0.999, and batch size 4 096, using weight decay, and gradient clipping at global norm 1.
     - We use a linear learning rate warmup of 10k steps and linear decay.
@@ -68,12 +77,39 @@
     - In particular, we use RandAugment [12], mixup [56], dropout [42], and stochastic depth [19].
     - This set of techniques was inspired by the timm library [52] and Touvron et al. [46].
     - More details on these hyperparameters are provided in Supplementary B.
-## [In progress] ResMLP
+## ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
-  - [Github rishikksh20/ResMLP-pytorch](https://github.com/rishikksh20/ResMLP-pytorch)
-  - **Usage**
+  - [Github facebookresearch/deit](https://github.com/facebookresearch/deit)
+  - **Models**
+    | Model      | Params | Image resolution | Top1 Acc | ImageNet |
+    | ---------- | ------ | ---------------- | -------- | -------- |
+    | ResMLP12   | 15M    | 224              | 77.8     | [resmlp12_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp12_imagenet.h5) |             |
+    | ResMLP24   | 30M    | 224              | 80.8     | [resmlp24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp24_imagenet.h5) |             |
+    | ResMLP36   | 116M   | 224              | 81.1     | [resmlp36_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp36_imagenet.h5) |             |
+    | ResMLP_B24 | 129M   | 224              | 83.6     | [resmlp_b24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet.h5) |             |
+    | - imagenet22k | 129M   | 224              | 84.4     | [resmlp_b24_imagenet22k.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet22k.h5) |             |
+
+  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet22k"]`, where `imagenet22k` means pre-trained on `imagenet21k` and fine-tuned on `imagenet`. Default is `imagenet`.
     ```py
     import keras_mlp
-    model = keras_mlp.ResMLP12(num_classes=1000)
+    # Will download and load `imagenet` pretrained weights.
+    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
+    mm = keras_mlp.ResMLP24(num_classes=1000, pretrained="imagenet")
+
+    # Run prediction
+    from skimage.data import chelsea
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch') # Chelsea the cat
+    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
+    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
+		# [('n02124075', 'Egyptian_cat', 0.86475366), ('n02123045', 'tabby', 0.028439553), ...]
     ```
+	- **Exclude model top layers** by set `num_classes=0`.
+  	```py
+    import keras_mlp
+    mm = keras_mlp.ResMLP_B24(num_classes=0, pretrained="imagenet22k")
+    print(mm.output_shape)
+    # (None, 784, 768)
+
+    mm.save('resmlp_b24_imagenet22k-notop.h5')
+  	```
 ***

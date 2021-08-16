@@ -1,4 +1,5 @@
 from keras_mlp.mlp_mixer import MlpMixer, MlpMixerS32, MlpMixerS16, MlpMixerB32, MlpMixerB16, MlpMixerL32, MlpMixerL16, MlpMixerH14
+from keras_mlp.res_mlp import ResMLP, ResMLP12, ResMLP24, ResMLP36, ResMLP_B24
 from keras_mlp.sam_model import SAMModel
 
 __head_doc__ = """
@@ -9,10 +10,12 @@ Paper [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arx
 
 __tail_doc__ = """  input_shape: it should have exactly 3 inputs channels like `(224, 224, 3)`.
   num_classes: number of classes to classify images into. Set `0` to exclude top layers.
+      For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
   activation: activation used in whole model, default `gelu`.
   sam_rho: None zero value to init model using `SAM` training step.
       SAM Arxiv article: [Sharpness-Aware Minimization for Efficiently Improving Generalization](https://arxiv.org/pdf/2010.01412.pdf).
   dropout: dropout rate if top layers is included.
+  drop_connect_rate:
   classifier_activation: A `str` or callable. The activation function to use on the "top" layer if `num_classes > 0`.
       Set `classifier_activation=None` to return the logits of the "top" layer.
       Default is `softmax`.

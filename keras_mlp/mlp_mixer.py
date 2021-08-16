@@ -19,14 +19,14 @@ def mlp_block(inputs, hidden_dim, activation="gelu", name=None):
 
 def mixer_block(inputs, tokens_mlp_dim, channels_mlp_dim=None, activation="gelu", name=None):
     nn = layer_norm(inputs, name=name + "LayerNorm_0")
-    nn = keras.layers.Permute((2, 1), name=name + "permute_1")(nn)
+    nn = keras.layers.Permute((2, 1), name=name + "permute_0")(nn)
     nn = mlp_block(nn, tokens_mlp_dim, activation, name=name + "token_mixing/")
-    nn = keras.layers.Permute((2, 1), name=name + "permute_2")(nn)
-    skip_conn = keras.layers.Add(name=name + "add_1")([nn, inputs])
+    nn = keras.layers.Permute((2, 1), name=name + "permute_1")(nn)
+    token_out = keras.layers.Add(name=name + "add_0")([nn, inputs])
 
-    nn = layer_norm(skip_conn, name=name + "LayerNorm_1")
-    nn = mlp_block(nn, channels_mlp_dim, activation, name=name + "channel_mixing/")
-    return keras.layers.Add(name=name + "add_2")([nn, skip_conn])
+    nn = layer_norm(token_out, name=name + "LayerNorm_1")
+    channel_out = mlp_block(nn, channels_mlp_dim, activation, name=name + "channel_mixing/")
+    return keras.layers.Add(name=name + "add_1")([channel_out, token_out])
 
 
 def MlpMixer(
@@ -40,6 +40,7 @@ def MlpMixer(
     activation="gelu",
     sam_rho=0,
     dropout=0,
+    drop_connect_rate=0,
     classifier_activation="softmax",
     pretrained="imagenet",
     model_name="mlp_mixer",
@@ -52,9 +53,9 @@ def MlpMixer(
     for ii in range(num_blocks):
         name = "{}_{}/".format("MixerBlock", str(ii))
         nn = mixer_block(nn, tokens_mlp_dim=tokens_mlp_dim, channels_mlp_dim=channels_mlp_dim, activation=activation, name=name)
+    nn = layer_norm(nn, name="pre_head_layer_norm")
 
     if num_classes > 0:
-        nn = layer_norm(nn, name="pre_head_layer_norm")
         nn = keras.layers.GlobalAveragePooling1D()(nn)  # tf.reduce_mean(nn, axis=1)
         if dropout > 0 and dropout < 1:
             nn = keras.layers.Dropout(dropout)(nn)
@@ -156,7 +157,7 @@ def MlpMixerH14(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", 
     return MlpMixer(**locals(), model_name="mlp_mixer_h14", **kwargs)
 
 
-if __name__ == "__test__":
+if __name__ == "__convert__":
     aa = np.load("../models/imagenet1k_Mixer-B_16.npz")
     bb = {kk: vv for kk, vv in aa.items()}
     # cc = {kk: vv.shape for kk, vv in bb.items()}
