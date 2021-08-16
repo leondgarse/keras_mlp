@@ -30,12 +30,12 @@ def mixer_block(inputs, tokens_mlp_dim, channels_mlp_dim=None, activation="gelu"
 
 
 def MlpMixer(
-    input_shape,
     num_blocks,
     patch_size,
     hidden_dim,
     tokens_mlp_dim,
     channels_mlp_dim,
+    input_shape=(224, 224 ,3),
     num_classes=0,
     activation="gelu",
     sam_rho=0,

@@ -20,19 +20,21 @@
     cd keras_mlp && pip install .
     ```
 ## MLP mixer
-  - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
-  - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
-  - Weights reload from [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models)
-  - **Models**
+  - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf).
+  - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch).
+  - Weights reload from [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models).
+  - **Models** `Top1 Acc` is `Pre-trained on JFT-300M` model accuray on `ImageNet 1K` from paper.
     | Model       | Params | Top1 Acc | ImageNet | Imagenet21k | ImageNet SAM |
     | ----------- | ------ | -------- | --------------- | ------------------ | ------------------- |
-    | MlpMixerS32 | 19.1M  |          |                 |                    |                     |
-    | MlpMixerS16 | 18.5M  |          |                 |                    |                     |
-    | MlpMixerB32 | 60.3M  |          |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
-    | MlpMixerB16 | 59.9M  |          | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
-    | MlpMixerL32 | 206.9M |          |  |  |                     |
-    | MlpMixerL16 | 208.2M |          | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
-    | MlpMixerH14 | 432.3M |          |                 |                    |                     |
+    | MlpMixerS32 | 19.1M  | 68.70    |                 |                    |                     |
+    | MlpMixerS16 | 18.5M  | 73.83    |                 |                    |                     |
+    | MlpMixerB32 | 60.3M  | 75.53    |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
+    | MlpMixerB16 | 59.9M  | 80.00    | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
+    | MlpMixerL32 | 206.9M | 80.67    |  |  |                     |
+    | MlpMixerL16 | 208.2M | 84.82    | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
+    | - input 448 | 208.2M | 86.78    |                 |                    |                     |
+    | MlpMixerH14 | 432.3M | 86.32    |                 |                    |                     |
+    | - input 448 | 432.3M | 87.94    |                 |                    |                     |
 
     | Specification        | S/32  | S/16  | B/32  | B/16  | L/32  | L/16  | H/14  |
     | -------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -56,6 +58,7 @@
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
     # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
     ```
+    For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
   - **Pre-training details**
     - We pre-train all models using Adam with β1 = 0.9, β2 = 0.999, and batch size 4 096, using weight decay, and gradient clipping at global norm 1.
     - We use a linear learning rate warmup of 10k steps and linear decay.
