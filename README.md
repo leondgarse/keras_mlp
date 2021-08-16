@@ -30,8 +30,8 @@
     | MlpMixerS16 | 18.5M  |          |                 |                    |                     |
     | MlpMixerB32 | 60.3M  |          |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
     | MlpMixerB16 | 59.9M  |          | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
-    | MlpMixerL32 | 206.9M |          | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
-    | MlpMixerL16 | 208.2M |          |                 |                    |                     |
+    | MlpMixerL32 | 206.9M |          |  |  |                     |
+    | MlpMixerL16 | 208.2M |          | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
     | MlpMixerH14 | 432.3M |          |                 |                    |                     |
 
     | Specification        | S/32  | S/16  | B/32  | B/16  | L/32  | L/16  | H/14  |

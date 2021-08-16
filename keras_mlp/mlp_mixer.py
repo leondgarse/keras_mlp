@@ -71,7 +71,12 @@ def MlpMixer(
 
 
 def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"):
-    if not pretrained in ["imagenet", "imagenet_sam", "imagenet21k"] or not model.name in ["mlp_mixer_b16", "mlp_mixer_l16", "mlp_mixer_b32"]:
+    pretrained_dd = {
+        "mlp_mixer_b16": ["imagenet", "imagenet_sam", "imagenet21k"],
+        "mlp_mixer_l16": ["imagenet", "imagenet21k"],
+        "mlp_mixer_b32": ["imagenet_sam"],
+    }
+    if model.name not in pretrained_dd or pretrained not in pretrained_dd[model.name]:
         print(">>>> No pretraind available, model will be random initialized")
         return
 
@@ -158,7 +163,7 @@ if __name__ == "__test__":
 
     import mlp_mixer
 
-    mm = mlp_mixer.MlpMixerS16(num_classes=1000, pretrained=None)
+    mm = mlp_mixer.MlpMixerB16(num_classes=1000, pretrained=None)
     # dd = {ii.name: ii.shape for ii in mm.weights}
 
     target_weights_dict = {"kernel": 0, "bias": 1, "scale": 0, "running_var": 3}
