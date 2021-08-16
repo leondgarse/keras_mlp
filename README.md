@@ -59,7 +59,7 @@
     # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
     ```
     For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
-	- **Exclude model top layers** by set `num_classes=0`.
+  - **Exclude model top layers** by set `num_classes=0`.
   	```py
     import keras_mlp
     mm = keras_mlp.MlpMixerL16(num_classes=0, pretrained="imagenet")
@@ -101,9 +101,9 @@
     imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch') # Chelsea the cat
     pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
-		# [('n02124075', 'Egyptian_cat', 0.86475366), ('n02123045', 'tabby', 0.028439553), ...]
+    # [('n02124075', 'Egyptian_cat', 0.86475366), ('n02123045', 'tabby', 0.028439553), ...]
     ```
-	- **Exclude model top layers** by set `num_classes=0`.
+  - **Exclude model top layers** by set `num_classes=0`.
   	```py
     import keras_mlp
     mm = keras_mlp.ResMLP_B24(num_classes=0, pretrained="imagenet22k")
