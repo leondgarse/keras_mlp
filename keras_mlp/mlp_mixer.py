@@ -69,6 +69,7 @@ def MlpMixer(
     reload_model_weights(model, input_shape, pretrained)
     return model
 
+
 def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"):
     if not pretrained in ["imagenet", "imagenet_sam", "imagenet21k"] or not model.name in ["mlp_mixer_b16", "mlp_mixer_l16", "mlp_mixer_b32"]:
         print(">>>> No pretraind available, model will be random initialized")
@@ -85,6 +86,7 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
     else:
         print(">>>> Load pretraind from:", pretrained_model)
         model.load_weights(pretrained_model, by_name=True, skip_mismatch=True)
+
 
 def MlpMixerS32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
     num_blocks = 8
@@ -121,6 +123,7 @@ def MlpMixerB16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", 
     channels_mlp_dim = 3072
     return MlpMixer(**locals(), model_name="mlp_mixer_b16", **kwargs)
 
+
 def MlpMixerL32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
     num_blocks = 24
     patch_size = 32
@@ -128,6 +131,7 @@ def MlpMixerL32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", 
     tokens_mlp_dim = 512
     channels_mlp_dim = 4096
     return MlpMixer(**locals(), model_name="mlp_mixer_l32", **kwargs)
+
 
 def MlpMixerL16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
     num_blocks = 24
@@ -137,6 +141,7 @@ def MlpMixerL16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", 
     channels_mlp_dim = 4096
     return MlpMixer(**locals(), model_name="mlp_mixer_l16", **kwargs)
 
+
 def MlpMixerH14(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
     num_blocks = 32
     patch_size = 14
@@ -145,12 +150,14 @@ def MlpMixerH14(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", 
     channels_mlp_dim = 5120
     return MlpMixer(**locals(), model_name="mlp_mixer_h14", **kwargs)
 
+
 if __name__ == "__test__":
-    aa = np.load('../models/imagenet1k_Mixer-B_16.npz')
+    aa = np.load("../models/imagenet1k_Mixer-B_16.npz")
     bb = {kk: vv for kk, vv in aa.items()}
     # cc = {kk: vv.shape for kk, vv in bb.items()}
 
     import mlp_mixer
+
     mm = mlp_mixer.MlpMixerS16(num_classes=1000, pretrained=None)
     # dd = {ii.name: ii.shape for ii in mm.weights}
 

@@ -10,24 +10,29 @@
 ***
 
 ## Usage
-  - This repo can be installed as a pip package, or just `git clone` it.
-    ```py
+  - This repo can be installed as a pip package.
+    ```sh
     pip install -U git+https://github.com/leondgarse/keras_mlp
+    ```
+    or just `git clone` it.
+    ```sh
+    git clone https://github.com/leondgarse/keras_mlp.git
+    cd keras_mlp && pip install .
     ```
 ## MLP mixer
   - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
   - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
   - Weights reload from [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models)
   - **Models**
-    | Model       | Params | 1k Top1 acc | ImageNet | Imagenet21k | ImageNet SAM |
-    | ----------- | ------ | ----------- | --------------- | ------------------ | ------------------- |
-    | MlpMixerS32 | 19.1M  |             |                 |                    |                     |
-    | MlpMixerS16 | 18.5M  |             |                 |                    |                     |
-    | MlpMixerB32 | 60.3M  |             |                 |                    | [mlp_mixer_b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
-    | MlpMixerB16 | 59.9M  |             | [mlp_mixer_b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [mlp_mixer_b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [mlp_mixer_b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
-    | MlpMixerL32 | 206.9M |             | [mlp_mixer_l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [mlp_mixer_l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
-    | MlpMixerL16 | 208.2M |             |                 |                    |                     |
-    | MlpMixerH14 | 432.3M |             |                 |                    |                     |
+    | Model       | Params | Top1 Acc | ImageNet | Imagenet21k | ImageNet SAM |
+    | ----------- | ------ | -------- | --------------- | ------------------ | ------------------- |
+    | MlpMixerS32 | 19.1M  |          |                 |                    |                     |
+    | MlpMixerS16 | 18.5M  |          |                 |                    |                     |
+    | MlpMixerB32 | 60.3M  |          |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
+    | MlpMixerB16 | 59.9M  |          | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
+    | MlpMixerL32 | 206.9M |          | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
+    | MlpMixerL16 | 208.2M |          |                 |                    |                     |
+    | MlpMixerH14 | 432.3M |          |                 |                    |                     |
 
     | Specification        | S/32  | S/16  | B/32  | B/16  | L/32  | L/16  | H/14  |
     | -------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
