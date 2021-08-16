@@ -61,12 +61,12 @@
     For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
 	- **Exclude model top layers** by set `num_classes=0`.
   	```py
-		import keras_mlp
-  	mm = keras_mlp.MlpMixerL16(num_classes=0, pretrained="imagenet")
-		print(mm.output_shape)
-		# (None, 196, 1024)
+    import keras_mlp
+    mm = keras_mlp.MlpMixerL16(num_classes=0, pretrained="imagenet")
+    print(mm.output_shape)
+    # (None, 196, 1024)
 
-		mm.save('mlp_mixer_l16_imagenet-notop.h5')
+    mm.save('mlp_mixer_l16_imagenet-notop.h5')
   	```
   - **Pre-training details**
     - We pre-train all models using Adam with β1 = 0.9, β2 = 0.999, and batch size 4 096, using weight decay, and gradient clipping at global norm 1.
