@@ -2,32 +2,32 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Keras_mlp](#kerasmlp)
+	- [Usage](#usage)
 	- [MLP mixer](#mlp-mixer)
-	- [ResMLP](#resmlp)
+	- [[In progress] ResMLP](#in-progress-resmlp)
 
 <!-- /TOC -->
 ***
 
+## Usage
+  - This repo can be installed as a pip package, or just `git clone` it.
+    ```py
+    pip install -U git+https://github.com/leondgarse/keras_mlp
+    ```
 ## MLP mixer
   - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf)
   - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch)
-  - [Github Benjamin-Etheredge/mlp-mixer-keras](https://github.com/Benjamin-Etheredge/mlp-mixer-keras)
-  - **Usage**
-    ```py
-    import mlp_mixer
-    model = mlp_mixer.MlpMixerModel_B32(num_classes=1000)
-    ```
-  - **Calculate total parameters** `DS -> token-mixing, DC --> channel-mixing, num_patch --> Sequence length`
-    ```py
-    inputs, patch_size, hidden_dim, DS, DC, num_blocks = 224, 32, 512, 256, 2048, 8
-    num_patch = (inputs * inputs) // (patch_size * patch_size)
-    conv = (patch_size * patch_size * 3 + 1) * hidden_dim
-    mlp_1 = (num_patch + 1) * DS + (DS + 1) * num_patch # input_shape = (num_patch, hidden_dim)
-    mlp_2 = (hidden_dim + 1) * DC + (DC + 1) * hidden_dim
-    mixer = (2 * num_patch) * 2 + mlp_1 +  mlp_2  # mixer: (LN = 2 * num_patch) * 2 + mlp_1 +  mlp_2
-    total = mixer * num_blocks + conv
-    print(f'{total = }')  # total = 18575784
-    ```
+  - Weights reload from [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models)
+  - **Models**
+    | Model       | Params | 1k Top1 acc | ImageNet | Imagenet21k | ImageNet SAM |
+    | ----------- | ------ | ----------- | --------------- | ------------------ | ------------------- |
+    | MlpMixerS32 | 19.1M  |             |                 |                    |                     |
+    | MlpMixerS16 | 18.5M  |             |                 |                    |                     |
+    | MlpMixerB32 | 60.3M  |             |                 |                    | [mlp_mixer_b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
+    | MlpMixerB16 | 59.9M  |             | [mlp_mixer_b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [mlp_mixer_b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [mlp_mixer_b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
+    | MlpMixerL32 | 206.9M |             | [mlp_mixer_l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [mlp_mixer_l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
+    | MlpMixerL16 | 208.2M |             |                 |                    |                     |
+    | MlpMixerH14 | 432.3M |             |                 |                    |                     |
 
     | Specification        | S/32  | S/16  | B/32  | B/16  | L/32  | L/16  | H/14  |
     | -------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -37,9 +37,20 @@
     | Sequence length S    | 49    | 196   | 49    | 196   | 49    | 196   | 256   |
     | MLP dimension DC     | 2048  | 2048  | 3072  | 3072  | 4096  | 4096  | 5120  |
     | MLP dimension DS     | 256   | 256   | 384   | 384   | 512   | 512   | 640   |
-    | Parameters (M)       | 10    | 10    | 46    | 46    | 188   | 189   | 409   |
-    | Self defined         | 18.5  | 18.0  | 59.5  | 59.1  | 205.8 | 207.1 | 430.9 |
+  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet21k", "imagenet_sam"]`, default is `imagenet`.
+    ```py
+    import keras_mlp
+    # Will download and load `imagenet` pretrained weights.
+    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
+    mm = keras_mlp.MlpMixerB16(num_classes=1000, pretrained="imagenet")
 
+    # Run prediction
+    from skimage.data import chelsea
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf') # Chelsea the cat
+    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
+    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
+    # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
+    ```
   - **Pre-training details**
     - We pre-train all models using Adam with β1 = 0.9, β2 = 0.999, and batch size 4 096, using weight decay, and gradient clipping at global norm 1.
     - We use a linear learning rate warmup of 10k steps and linear decay.
@@ -49,12 +60,12 @@
     - In particular, we use RandAugment [12], mixup [56], dropout [42], and stochastic depth [19].
     - This set of techniques was inspired by the timm library [52] and Touvron et al. [46].
     - More details on these hyperparameters are provided in Supplementary B.
-## ResMLP
+## [In progress] ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
   - [Github rishikksh20/ResMLP-pytorch](https://github.com/rishikksh20/ResMLP-pytorch)
   - **Usage**
     ```py
-    import res_mlp
-    model = res_mlp.ResMLP12(num_classes=1000)
+    import keras_mlp
+    model = keras_mlp.ResMLP12(num_classes=1000)
     ```
 ***
