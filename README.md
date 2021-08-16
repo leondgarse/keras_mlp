@@ -80,7 +80,7 @@
 ## ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
   - [Github facebookresearch/deit](https://github.com/facebookresearch/deit)
-  - **Models**
+  - **Models** loaded `imagenet` weights are the `distilled` version from official.
     | Model      | Params | Image resolution | Top1 Acc | ImageNet |
     | ---------- | ------ | ---------------- | -------- | -------- |
     | ResMLP12   | 15M    | 224              | 77.8     | [resmlp12_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp12_imagenet.h5) |             |
@@ -112,4 +112,13 @@
 
     mm.save('resmlp_b24_imagenet22k-notop.h5')
   	```
+## [In progress] GMLP
+	- [PDF 2105.08050 Pay Attention to MLPs](https://arxiv.org/pdf/2105.08050.pdf).
+	- Model weights load from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
+	- **Models**
+    | Model   | Params | Image resolution | Top1 Acc | ImageNet |
+    | ------- | ------ | ---------------- | -------- | -------- |
+    | GMLP_Ti | 6M     | 224              | 72.3     |          |
+    | GMLP_S  | 20M    | 224              | 79.6     |          |
+    | GMLPB   | 73M    | 224              | 81.6     |          |
 ***
