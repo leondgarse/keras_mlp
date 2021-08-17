@@ -2,10 +2,10 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Keras_mlp](#kerasmlp)
-	- [Usage](#usage)
-	- [MLP mixer](#mlp-mixer)
-	- [ResMLP](#resmlp)
-	- [GMLP](#gmlp)
+  - [Usage](#usage)
+  - [MLP mixer](#mlp-mixer)
+  - [ResMLP](#resmlp)
+  - [GMLP](#gmlp)
 
 <!-- /TOC -->
 ***
@@ -19,6 +19,32 @@
     ```sh
     git clone https://github.com/leondgarse/keras_mlp.git
     cd keras_mlp && pip install .
+    ```
+  - **Basic usage**
+    ```py
+    import keras_mlp
+    # Will download and load `imagenet` pretrained weights.
+    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
+    mm = keras_mlp.MLPMixerB16(num_classes=1000, pretrained="imagenet")
+
+    # Run prediction
+    import tensorflow as tf
+    from tensorflow import keras
+    from skimage.data import chelsea # Chelsea the cat
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf')
+    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
+    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
+    # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
+    ```
+    For `"imagenet21k"` pre-trained models, actual `num_classes` is `21843`.
+  - **Exclude model top layers** by set `num_classes=0`.
+    ```py
+    import keras_mlp
+    mm = keras_mlp.ResMLP_B24(num_classes=0, pretrained="imagenet22k")
+    print(mm.output_shape)
+    # (None, 784, 768)
+
+    mm.save('resmlp_b24_imagenet22k-notop.h5')
     ```
 ## MLP mixer
   - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf).
@@ -44,32 +70,7 @@
     | Sequence length S    | 49    | 196   | 49    | 196   | 49    | 196   | 256   |
     | MLP dimension DC     | 2048  | 2048  | 3072  | 3072  | 4096  | 4096  | 5120  |
     | MLP dimension DS     | 256   | 256   | 384   | 384   | 512   | 512   | 640   |
-  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet21k", "imagenet_sam"]`. Default is `imagenet`.
-    ```py
-    import keras_mlp
-    # Will download and load `imagenet` pretrained weights.
-    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
-    mm = keras_mlp.MLPMixerB16(num_classes=1000, pretrained="imagenet")
-
-    # Run prediction
-		import tensorflow as tf
-		from tensorflow import keras
-    from skimage.data import chelsea # Chelsea the cat
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf')
-    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
-    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
-    # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
-    ```
-    For `"imagenet21k"` pre-trained model, actual `num_classes` is `21843`.
-  - **Exclude model top layers** by set `num_classes=0`.
-  	```py
-    import keras_mlp
-    mm = keras_mlp.MLPMixerL16(num_classes=0, pretrained="imagenet")
-    print(mm.output_shape)
-    # (None, 196, 1024)
-
-    mm.save('mlp_mixer_l16_imagenet-notop.h5')
-  	```
+  - Parameter `pretrained` is added in value `[None, "imagenet", "imagenet21k", "imagenet_sam"]`. Default is `imagenet`.
   - **Pre-training details**
     - We pre-train all models using Adam with β1 = 0.9, β2 = 0.999, and batch size 4 096, using weight decay, and gradient clipping at global norm 1.
     - We use a linear learning rate warmup of 10k steps and linear decay.
@@ -91,31 +92,7 @@
     | ResMLP_B24 | 129M   | 224              | 83.6     | [resmlp_b24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet.h5) |             |
     | - imagenet22k | 129M   | 224              | 84.4     | [resmlp_b24_imagenet22k.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet22k.h5) |             |
 
-  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet", "imagenet22k"]`, where `imagenet22k` means pre-trained on `imagenet21k` and fine-tuned on `imagenet`. Default is `imagenet`.
-    ```py
-    import keras_mlp
-    # Will download and load `imagenet` pretrained weights.
-    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
-    mm = keras_mlp.ResMLP24(num_classes=1000, pretrained="imagenet")
-
-    # Run prediction
-		import tensorflow as tf
-		from tensorflow import keras
-    from skimage.data import chelsea # Chelsea the cat
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch')
-    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
-    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
-    # [('n02124075', 'Egyptian_cat', 0.86475366), ('n02123045', 'tabby', 0.028439553), ...]
-    ```
-  - **Exclude model top layers** by set `num_classes=0`.
-  	```py
-    import keras_mlp
-    mm = keras_mlp.ResMLP_B24(num_classes=0, pretrained="imagenet22k")
-    print(mm.output_shape)
-    # (None, 784, 768)
-
-    mm.save('resmlp_b24_imagenet22k-notop.h5')
-  	```
+  - Parameter `pretrained` is added in value `[None, "imagenet", "imagenet22k"]`, where `imagenet22k` means pre-trained on `imagenet21k` and fine-tuned on `imagenet`. Default is `imagenet`.
 ## GMLP
   - [PDF 2105.08050 Pay Attention to MLPs](https://arxiv.org/pdf/2105.08050.pdf).
   - Model weights reloaded from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
@@ -126,29 +103,6 @@
     | GMLPS16    | 20M    | 224              | 79.6     | [gmlp_s16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/gmlp/gmlp_s16_imagenet.h5)         |
     | GMLPB16    | 73M    | 224              | 81.6     |          |
 
-  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
+  - Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
     ```py
-    import keras_mlp
-    # Will download and load `imagenet` pretrained weights.
-    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
-    mm = keras_mlp.GMLPS16(num_classes=1000, pretrained="imagenet")
-
-    # Run prediction
-		import tensorflow as tf
-		from tensorflow import keras
-    from skimage.data import chelsea # Chelsea the cat
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch')
-    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
-    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
-    # [('n02124075', 'Egyptian_cat', 0.8490739), ('n02123159', 'tiger_cat', 0.03078305), ...]
-    ```
-  - **Exclude model top layers** by set `num_classes=0`.
-    ```py
-    import keras_mlp
-    mm = keras_mlp.GMLPS16(num_classes=0, pretrained="imagenet")
-    print(mm.output_shape)
-    # (None, 196, 256)
-
-    mm.save('gmlp_s16_imagenet-notop.h5')
-    ```
 ***
