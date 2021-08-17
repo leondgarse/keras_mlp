@@ -110,7 +110,7 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
         "resmlp_b24": ["imagenet", "imagenet22k"],
     }
     if model.name not in pretrained_dd or pretrained not in pretrained_dd[model.name]:
-        print(">>>> No pretraind available, model will be random initialized")
+        print(">>>> No pretraind available, model will be randomly initialized")
         return
 
     pre_url = "https://github.com/leondgarse/keras_mlp/releases/download/resmlp/{}_{}.h5"

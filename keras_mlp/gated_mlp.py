@@ -1,5 +1,5 @@
 from tensorflow import keras
-from tensorflow.python.keras import backend as K
+from tensorflow.keras import backend as K
 import tensorflow as tf
 import os
 
@@ -86,7 +86,7 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
         "gmlp_s16": ["imagenet"],
     }
     if model.name not in pretrained_dd or pretrained not in pretrained_dd[model.name]:
-        print(">>>> No pretraind available, model will be random initialized")
+        print(">>>> No pretraind available, model will be randomly initialized")
         return
 
     pre_url = "https://github.com/leondgarse/keras_mlp/releases/download/gmlp/{}_{}.h5"

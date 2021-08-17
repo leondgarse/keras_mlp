@@ -86,11 +86,11 @@
   - **Models** reloaded `imagenet` weights are the `distilled` version from official.
     | Model      | Params | Image resolution | Top1 Acc | ImageNet |
     | ---------- | ------ | ---------------- | -------- | -------- |
-    | ResMLP12   | 15M    | 224              | 77.8     | [resmlp12_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp12_imagenet.h5) |             |
-    | ResMLP24   | 30M    | 224              | 80.8     | [resmlp24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp24_imagenet.h5) |             |
-    | ResMLP36   | 116M   | 224              | 81.1     | [resmlp36_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp36_imagenet.h5) |             |
-    | ResMLP_B24 | 129M   | 224              | 83.6     | [resmlp_b24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet.h5) |             |
-    | - imagenet22k | 129M   | 224              | 84.4     | [resmlp_b24_imagenet22k.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet22k.h5) |             |
+    | ResMLP12   | 15M    | 224              | 77.8     | [resmlp12_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp12_imagenet.h5) |
+    | ResMLP24   | 30M    | 224              | 80.8     | [resmlp24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp24_imagenet.h5) |
+    | ResMLP36   | 116M   | 224              | 81.1     | [resmlp36_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp36_imagenet.h5) |
+    | ResMLP_B24 | 129M   | 224              | 83.6     | [resmlp_b24_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet.h5) |
+    | - imagenet22k | 129M   | 224              | 84.4     | [resmlp_b24_imagenet22k.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp_b24_imagenet22k.h5) |
 
   - Parameter `pretrained` is added in value `[None, "imagenet", "imagenet22k"]`, where `imagenet22k` means pre-trained on `imagenet21k` and fine-tuned on `imagenet`. Default is `imagenet`.
 ## GMLP

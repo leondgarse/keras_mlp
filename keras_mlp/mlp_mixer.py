@@ -1,5 +1,5 @@
 from tensorflow import keras
-from tensorflow.python.keras import backend as K
+from tensorflow.keras import backend as K
 import os
 
 BATCH_NORM_EPSILON = 1e-5
@@ -84,7 +84,7 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
         "mlp_mixer_b32": ["imagenet_sam"],
     }
     if model.name not in pretrained_dd or pretrained not in pretrained_dd[model.name]:
-        print(">>>> No pretraind available, model will be random initialized")
+        print(">>>> No pretraind available, model will be randomly initialized")
         return
 
     pre_url = "https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/{}_{}.h5"
