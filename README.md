@@ -22,8 +22,7 @@
     ```
 ## MLP mixer
   - [PDF 2105.01601 MLP-Mixer: An all-MLP Architecture for Vision](https://arxiv.org/pdf/2105.01601.pdf).
-  - [Github lucidrains/mlp-mixer-pytorch](https://github.com/lucidrains/mlp-mixer-pytorch).
-  - Weights reload from [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models).
+  - [Github google-research/vision_transformer](https://github.com/google-research/vision_transformer#available-mixer-models).
   - **Models** `Top1 Acc` is `Pre-trained on JFT-300M` model accuray on `ImageNet 1K` from paper.
     | Model       | Params | Top1 Acc | ImageNet | Imagenet21k | ImageNet SAM |
     | ----------- | ------ | -------- | --------------- | ------------------ | ------------------- |
@@ -53,8 +52,10 @@
     mm = keras_mlp.MLPMixerB16(num_classes=1000, pretrained="imagenet")
 
     # Run prediction
-    from skimage.data import chelsea
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf') # Chelsea the cat
+		import tensorflow as tf
+		from tensorflow import keras
+    from skimage.data import chelsea # Chelsea the cat
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf')
     pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
     # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
@@ -81,7 +82,7 @@
 ## ResMLP
   - [PDF 2105.03404 ResMLP: Feedforward networks for image classification with data-efficient training](https://arxiv.org/pdf/2105.03404.pdf)
   - [Github facebookresearch/deit](https://github.com/facebookresearch/deit)
-  - **Models** loaded `imagenet` weights are the `distilled` version from official.
+  - **Models** reloaded `imagenet` weights are the `distilled` version from official.
     | Model      | Params | Image resolution | Top1 Acc | ImageNet |
     | ---------- | ------ | ---------------- | -------- | -------- |
     | ResMLP12   | 15M    | 224              | 77.8     | [resmlp12_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/resmlp/resmlp12_imagenet.h5) |             |
@@ -98,8 +99,10 @@
     mm = keras_mlp.ResMLP24(num_classes=1000, pretrained="imagenet")
 
     # Run prediction
-    from skimage.data import chelsea
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch') # Chelsea the cat
+		import tensorflow as tf
+		from tensorflow import keras
+    from skimage.data import chelsea # Chelsea the cat
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch')
     pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
     # [('n02124075', 'Egyptian_cat', 0.86475366), ('n02123045', 'tabby', 0.028439553), ...]
@@ -115,7 +118,7 @@
   	```
 ## GMLP
   - [PDF 2105.08050 Pay Attention to MLPs](https://arxiv.org/pdf/2105.08050.pdf).
-  - Model weights load from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
+  - Model weights reloaded from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
   - **Models**
     | Model      | Params | Image resolution | Top1 Acc | ImageNet |
     | ---------- | ------ | ---------------- | -------- | -------- |
@@ -123,7 +126,7 @@
     | GMLPS16    | 20M    | 224              | 79.6     | [gmlp_s16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/gmlp/gmlp_s16_imagenet.h5)         |
     | GMLPB16    | 73M    | 224              | 81.6     |          |
 
-	- **Usage** Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
+  - **Usage** Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
     ```py
     import keras_mlp
     # Will download and load `imagenet` pretrained weights.
@@ -131,8 +134,10 @@
     mm = keras_mlp.GMLPS16(num_classes=1000, pretrained="imagenet")
 
     # Run prediction
-    from skimage.data import chelsea
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch') # Chelsea the cat
+		import tensorflow as tf
+		from tensorflow import keras
+    from skimage.data import chelsea # Chelsea the cat
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch')
     pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
     # [('n02124075', 'Egyptian_cat', 0.8490739), ('n02123159', 'tiger_cat', 0.03078305), ...]
