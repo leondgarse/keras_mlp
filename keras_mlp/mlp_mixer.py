@@ -4,58 +4,6 @@ import os
 
 BATCH_NORM_EPSILON = 1e-5
 
-BLOCK_CONFIGS = {
-    "s32": {
-        "num_blocks": 8,
-        "patch_size": 32,
-        "hidden_dim": 512,
-        "tokens_mlp_dim": 256,
-        "channels_mlp_dim": 2048,
-    },
-    "s16": {
-        "num_blocks": 8,
-        "patch_size": 16,
-        "hidden_dim": 512,
-        "tokens_mlp_dim": 256,
-        "channels_mlp_dim": 2048,
-    },
-    "b32": {
-        "num_blocks": 12,
-        "patch_size": 32,
-        "hidden_dim": 768,
-        "tokens_mlp_dim": 384,
-        "channels_mlp_dim": 3072,
-    },
-    "b16": {
-        "num_blocks": 12,
-        "patch_size": 16,
-        "hidden_dim": 768,
-        "tokens_mlp_dim": 384,
-        "channels_mlp_dim": 3072,
-    },
-    "l32": {
-        "num_blocks": 24,
-        "patch_size": 32,
-        "hidden_dim": 1024,
-        "tokens_mlp_dim": 512,
-        "channels_mlp_dim": 4096,
-    },
-    "l16": {
-        "num_blocks": 24,
-        "patch_size": 16,
-        "hidden_dim": 1024,
-        "tokens_mlp_dim": 512,
-        "channels_mlp_dim": 4096,
-    },
-    "h14": {
-        "num_blocks": 32,
-        "patch_size": 14,
-        "hidden_dim": 1280,
-        "tokens_mlp_dim": 640,
-        "channels_mlp_dim": 5120,
-    },
-}
-
 
 def layer_norm(inputs, name=None):
     norm_axis = -1 if K.image_data_format() == "channels_last" else 1
@@ -69,7 +17,7 @@ def mlp_block(inputs, hidden_dim, activation="gelu", name=None):
     return nn
 
 
-def mixer_block(inputs, tokens_mlp_dim, channels_mlp_dim=None, drop_rate=0, activation="gelu", name=None):
+def mixer_block(inputs, tokens_mlp_dim, channels_mlp_dim, drop_rate=0, activation="gelu", name=None):
     nn = layer_norm(inputs, name=name + "LayerNorm_0")
     nn = keras.layers.Permute((2, 1), name=name + "permute_0")(nn)
     nn = mlp_block(nn, tokens_mlp_dim, activation, name=name + "token_mixing/")
@@ -85,10 +33,10 @@ def mixer_block(inputs, tokens_mlp_dim, channels_mlp_dim=None, drop_rate=0, acti
     return keras.layers.Add(name=name + "add_1")([channel_out, token_out])
 
 
-def MlpMixer(
+def MLPMixer(
     num_blocks,
     patch_size,
-    hidden_dim,
+    stem_width,
     tokens_mlp_dim,
     channels_mlp_dim,
     input_shape=(224, 224, 3),
@@ -103,14 +51,14 @@ def MlpMixer(
     kwargs=None,
 ):
     inputs = keras.Input(input_shape)
-    nn = keras.layers.Conv2D(hidden_dim, kernel_size=patch_size, strides=patch_size, padding="same", name="stem")(inputs)
-    nn = keras.layers.Reshape([-1, hidden_dim])(nn)
+    nn = keras.layers.Conv2D(stem_width, kernel_size=patch_size, strides=patch_size, padding="same", name="stem")(inputs)
+    nn = keras.layers.Reshape([-1, stem_width])(nn)
 
     drop_connect_s, drop_connect_e = drop_connect_rate if isinstance(drop_connect_rate, (list, tuple)) else [drop_connect_rate, drop_connect_rate]
     for ii in range(num_blocks):
         name = "{}_{}/".format("MixerBlock", str(ii))
-        drop_rate = drop_connect_s + (drop_connect_e - drop_connect_s) * ii / num_blocks
-        nn = mixer_block(nn, tokens_mlp_dim=tokens_mlp_dim, channels_mlp_dim=channels_mlp_dim, drop_rate=drop_rate, activation=activation, name=name)
+        block_drop_rate = drop_connect_s + (drop_connect_e - drop_connect_s) * ii / num_blocks
+        nn = mixer_block(nn, tokens_mlp_dim, channels_mlp_dim, drop_rate=block_drop_rate, activation=activation, name=name)
     nn = layer_norm(nn, name="pre_head_layer_norm")
 
     if num_classes > 0:
@@ -152,32 +100,85 @@ def reload_model_weights(model, input_shape=(224, 224, 3), pretrained="imagenet"
         model.load_weights(pretrained_model, by_name=True, skip_mismatch=True)
 
 
-def MlpMixerS32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["s32"], **locals(), model_name="mlp_mixer_s32", **kwargs)
+BLOCK_CONFIGS = {
+    "s32": {
+        "num_blocks": 8,
+        "patch_size": 32,
+        "stem_width": 512,
+        "tokens_mlp_dim": 256,
+        "channels_mlp_dim": 2048,
+    },
+    "s16": {
+        "num_blocks": 8,
+        "patch_size": 16,
+        "stem_width": 512,
+        "tokens_mlp_dim": 256,
+        "channels_mlp_dim": 2048,
+    },
+    "b32": {
+        "num_blocks": 12,
+        "patch_size": 32,
+        "stem_width": 768,
+        "tokens_mlp_dim": 384,
+        "channels_mlp_dim": 3072,
+    },
+    "b16": {
+        "num_blocks": 12,
+        "patch_size": 16,
+        "stem_width": 768,
+        "tokens_mlp_dim": 384,
+        "channels_mlp_dim": 3072,
+    },
+    "l32": {
+        "num_blocks": 24,
+        "patch_size": 32,
+        "stem_width": 1024,
+        "tokens_mlp_dim": 512,
+        "channels_mlp_dim": 4096,
+    },
+    "l16": {
+        "num_blocks": 24,
+        "patch_size": 16,
+        "stem_width": 1024,
+        "tokens_mlp_dim": 512,
+        "channels_mlp_dim": 4096,
+    },
+    "h14": {
+        "num_blocks": 32,
+        "patch_size": 14,
+        "stem_width": 1280,
+        "tokens_mlp_dim": 640,
+        "channels_mlp_dim": 5120,
+    },
+}
 
 
-def MlpMixerS16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["s16"], **locals(), model_name="mlp_mixer_s16", **kwargs)
+def MLPMixerS32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["s32"], **locals(), model_name="mlp_mixer_s32", **kwargs)
 
 
-def MlpMixerB32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["b32"], **locals(), model_name="mlp_mixer_b32", **kwargs)
+def MLPMixerS16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["s16"], **locals(), model_name="mlp_mixer_s16", **kwargs)
 
 
-def MlpMixerB16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["b16"], **locals(), model_name="mlp_mixer_b16", **kwargs)
+def MLPMixerB32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["b32"], **locals(), model_name="mlp_mixer_b32", **kwargs)
 
 
-def MlpMixerL32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["l32"], **locals(), model_name="mlp_mixer_l32", **kwargs)
+def MLPMixerB16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["b16"], **locals(), model_name="mlp_mixer_b16", **kwargs)
 
 
-def MlpMixerL16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["l16"], **locals(), model_name="mlp_mixer_l16", **kwargs)
+def MLPMixerL32(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["l32"], **locals(), model_name="mlp_mixer_l32", **kwargs)
 
 
-def MlpMixerH14(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
-    return MlpMixer(**BLOCK_CONFIGS["h14"], **locals(), model_name="mlp_mixer_h14", **kwargs)
+def MLPMixerL16(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["l16"], **locals(), model_name="mlp_mixer_l16", **kwargs)
+
+
+def MLPMixerH14(input_shape=(224, 224, 3), num_classes=1000, activation="gelu", classifier_activation="softmax", pretrained="imagenet", **kwargs):
+    return MLPMixer(**BLOCK_CONFIGS["h14"], **locals(), model_name="mlp_mixer_h14", **kwargs)
 
 
 if __name__ == "__convert__":
@@ -187,7 +188,7 @@ if __name__ == "__convert__":
 
     import mlp_mixer
 
-    mm = mlp_mixer.MlpMixerB16(num_classes=1000, pretrained=None)
+    mm = mlp_mixer.MLPMixerB16(num_classes=1000, pretrained=None)
     # dd = {ii.name: ii.shape for ii in mm.weights}
 
     target_weights_dict = {"kernel": 0, "bias": 1, "scale": 0, "running_var": 3}

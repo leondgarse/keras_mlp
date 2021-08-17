@@ -5,6 +5,7 @@
 	- [Usage](#usage)
 	- [MLP mixer](#mlp-mixer)
 	- [ResMLP](#resmlp)
+	- [GMLP](#gmlp)
 
 <!-- /TOC -->
 ***
@@ -26,14 +27,14 @@
   - **Models** `Top1 Acc` is `Pre-trained on JFT-300M` model accuray on `ImageNet 1K` from paper.
     | Model       | Params | Top1 Acc | ImageNet | Imagenet21k | ImageNet SAM |
     | ----------- | ------ | -------- | --------------- | ------------------ | ------------------- |
-    | MlpMixerS32 | 19.1M  | 68.70    |                 |                    |                     |
-    | MlpMixerS16 | 18.5M  | 73.83    |                 |                    |                     |
-    | MlpMixerB32 | 60.3M  | 75.53    |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
-    | MlpMixerB16 | 59.9M  | 80.00    | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
-    | MlpMixerL32 | 206.9M | 80.67    |  |  |                     |
-    | MlpMixerL16 | 208.2M | 84.82    | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
+    | MLPMixerS32 | 19.1M  | 68.70    |                 |                    |                     |
+    | MLPMixerS16 | 18.5M  | 73.83    |                 |                    |                     |
+    | MLPMixerB32 | 60.3M  | 75.53    |                 |                    | [b32_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b32_imagenet_sam.h5) |
+    | MLPMixerB16 | 59.9M  | 80.00    | [b16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet.h5) | [b16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet21k.h5) | [b16_imagenet_sam.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_b16_imagenet_sam.h5) |
+    | MLPMixerL32 | 206.9M | 80.67    |  |  |                     |
+    | MLPMixerL16 | 208.2M | 84.82    | [l16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet.h5) | [l16_imagenet21k.h5](https://github.com/leondgarse/keras_mlp/releases/download/mlp_mixer/mlp_mixer_l16_imagenet21k.h5) |                     |
     | - input 448 | 208.2M | 86.78    |                 |                    |                     |
-    | MlpMixerH14 | 432.3M | 86.32    |                 |                    |                     |
+    | MLPMixerH14 | 432.3M | 86.32    |                 |                    |                     |
     | - input 448 | 432.3M | 87.94    |                 |                    |                     |
 
     | Specification        | S/32  | S/16  | B/32  | B/16  | L/32  | L/16  | H/14  |
@@ -49,7 +50,7 @@
     import keras_mlp
     # Will download and load `imagenet` pretrained weights.
     # Model weight is loaded with `by_name=True, skip_mismatch=True`.
-    mm = keras_mlp.MlpMixerB16(num_classes=1000, pretrained="imagenet")
+    mm = keras_mlp.MLPMixerB16(num_classes=1000, pretrained="imagenet")
 
     # Run prediction
     from skimage.data import chelsea
@@ -62,7 +63,7 @@
   - **Exclude model top layers** by set `num_classes=0`.
   	```py
     import keras_mlp
-    mm = keras_mlp.MlpMixerL16(num_classes=0, pretrained="imagenet")
+    mm = keras_mlp.MLPMixerL16(num_classes=0, pretrained="imagenet")
     print(mm.output_shape)
     # (None, 196, 1024)
 
@@ -112,13 +113,37 @@
 
     mm.save('resmlp_b24_imagenet22k-notop.h5')
   	```
-## [In progress] GMLP
-	- [PDF 2105.08050 Pay Attention to MLPs](https://arxiv.org/pdf/2105.08050.pdf).
-	- Model weights load from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
-	- **Models**
-    | Model   | Params | Image resolution | Top1 Acc | ImageNet |
-    | ------- | ------ | ---------------- | -------- | -------- |
-    | GMLP_Ti | 6M     | 224              | 72.3     |          |
-    | GMLP_S  | 20M    | 224              | 79.6     |          |
-    | GMLPB   | 73M    | 224              | 81.6     |          |
+## GMLP
+  - [PDF 2105.08050 Pay Attention to MLPs](https://arxiv.org/pdf/2105.08050.pdf).
+  - Model weights load from [Github timm/models/mlp_mixer](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/mlp_mixer.py).
+  - **Models**
+    | Model      | Params | Image resolution | Top1 Acc | ImageNet |
+    | ---------- | ------ | ---------------- | -------- | -------- |
+    | GMLPTiny16 | 6M     | 224              | 72.3     |          |
+    | GMLPS16    | 20M    | 224              | 79.6     | [gmlp_s16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/gmlp/gmlp_s16_imagenet.h5)         |
+    | GMLPB16    | 73M    | 224              | 81.6     |          |
+
+	- **Usage** Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
+    ```py
+    import keras_mlp
+    # Will download and load `imagenet` pretrained weights.
+    # Model weight is loaded with `by_name=True, skip_mismatch=True`.
+    mm = keras_mlp.GMLPS16(num_classes=1000, pretrained="imagenet")
+
+    # Run prediction
+    from skimage.data import chelsea
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='torch') # Chelsea the cat
+    pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
+    print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
+    # [('n02124075', 'Egyptian_cat', 0.8490739), ('n02123159', 'tiger_cat', 0.03078305), ...]
+    ```
+  - **Exclude model top layers** by set `num_classes=0`.
+    ```py
+    import keras_mlp
+    mm = keras_mlp.GMLPS16(num_classes=0, pretrained="imagenet")
+    print(mm.output_shape)
+    # (None, 196, 256)
+
+    mm.save('gmlp_s16_imagenet-notop.h5')
+    ```
 ***
