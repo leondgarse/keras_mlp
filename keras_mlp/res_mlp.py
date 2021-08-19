@@ -2,7 +2,7 @@ from tensorflow import keras
 import os
 
 
-@keras.utils.register_keras_serializable(package="Custom")
+@keras.utils.register_keras_serializable(package="resmlp")
 class ChannelAffine(keras.layers.Layer):
     def __init__(self, use_bias=True, weight_init_value=1, **kwargs):
         super(ChannelAffine, self).__init__(**kwargs)
@@ -76,7 +76,7 @@ def ResMLP(
 ):
     inputs = keras.Input(input_shape)
     nn = keras.layers.Conv2D(stem_width, kernel_size=patch_size, strides=patch_size, padding="valid", name="stem")(inputs)
-    nn = keras.layers.Reshape([-1, stem_width])(nn)
+    nn = keras.layers.Reshape([nn.shape[1] * nn.shape[2], stem_width])(nn)
 
     drop_connect_s, drop_connect_e = drop_connect_rate if isinstance(drop_connect_rate, (list, tuple)) else [drop_connect_rate, drop_connect_rate]
     for ii in range(num_blocks):

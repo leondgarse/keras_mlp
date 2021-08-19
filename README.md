@@ -31,7 +31,7 @@
     import tensorflow as tf
     from tensorflow import keras
     from skimage.data import chelsea # Chelsea the cat
-    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf')	# model="tf" or "torch"
+    imm = keras.applications.imagenet_utils.preprocess_input(chelsea(), mode='tf') # model="tf" or "torch"
     pred = mm(tf.expand_dims(tf.image.resize(imm, mm.input_shape[1:3]), 0)).numpy()
     print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
     # [('n02124075', 'Egyptian_cat', 0.9568315), ('n02123045', 'tabby', 0.017994137), ...]
@@ -100,7 +100,7 @@
     | Model      | Params | Image resolution | Top1 Acc | ImageNet |
     | ---------- | ------ | ---------------- | -------- | -------- |
     | GMLPTiny16 | 6M     | 224              | 72.3     |          |
-    | GMLPS16    | 20M    | 224              | 79.6     | [gmlp_s16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/gmlp/gmlp_s16_imagenet.h5)         |
+    | GMLPS16    | 20M    | 224              | 79.6     | [gmlp_s16_imagenet.h5](https://github.com/leondgarse/keras_mlp/releases/download/gmlp/gmlp_s16_imagenet.h5) |
     | GMLPB16    | 73M    | 224              | 81.6     |          |
 
   - Parameter `pretrained` is added in value `[None, "imagenet"]`. Default is `imagenet`.
