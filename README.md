@@ -1,5 +1,5 @@
 # Keras_mlp
-- **Project Merged into [Github leondgarse/keras_cv_attention_models](https://github.com/leondgarse/keras_cv_attention_models), will delete.**
+- **Project Merged into [Github leondgarse/keras_cv_attention_models/mlp_family](https://github.com/leondgarse/keras_cv_attention_models/tree/main/keras_cv_attention_models/mlp_family).**
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Keras_mlp](#kerasmlp)
